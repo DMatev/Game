@@ -1,0 +1,27 @@
+{
+  "name": "game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc:w": "tsc -w",
+    "typings": "tsd install",
+    "postinstall": "npm run typings"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DMatev/Game.git"
+  },
+  "author": "DMatev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DMatev/Game/issues"
+  },
+  "homepage": "https://github.com/DMatev/Game#readme",
+  "dependencies": {
+    "jquery": "3.1.0",
+    "tsd": "0.6.5",
+    "typescript": "1.8.10"
+  }
+}
