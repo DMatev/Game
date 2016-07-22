@@ -4,12 +4,18 @@ class GameEngine {
     private player: Player;
     private drawer: Drawer;
     private gameInterval: any;
+    private inputHandler: InputHandler;
 
     constructor() {
+        this.init();
+    }
+
+    init() {
         this.gameSettings = new GameSettings();
         this.timer = new Timer(this.gameSettings);
         this.drawer = new Drawer(this.gameSettings);
         this.player = new Player(this.gameSettings);
+        this.inputHandler = new InputHandler();
     }
 
     mainLoop() {
@@ -61,18 +67,6 @@ class GameEngine {
         // }
     }
 
-    speedUp() {
-        // this.TreeSpeed += 1;
-        this.gameSettings.scoreScale += 5;
-    }
-
-    slowDown() {
-        if (this.gameSettings.scoreScale > 5) {
-            // this.TreeSpeed -= 1;
-            this.gameSettings.scoreScale -= 5;
-        }
-    }
-
     detectCollision(obj1: GameObject, obj2: GameObject) {
         var hit = ((obj1.top < (obj2.top + obj2.height)) &&
             ((obj1.left + obj1.width) > obj2.left) && ((obj1.left + obj1.width) < (obj2.left + obj2.width))) ||
@@ -81,30 +75,36 @@ class GameEngine {
         return hit;
     }
 
-    trackPlayerMove(e) {
-        if (e.keyCode == 39) { //right
-            if ((this.player.left + this.player.width + this.player.speed) <= this.gameSettings.mainScreenWidth) {
-                this.player.updatePosition(this.player.left + this.player.speed, this.player.top)
-                if (!this.player.LastMoveRight) {
-                    this.player.turnRight();
-                }
+    turnRightHandler() {
+        if ((this.player.left + this.player.width + this.player.speed) <= this.gameSettings.mainScreenWidth) {
+            this.player.updatePosition(this.player.left + this.player.speed, this.player.top)
+            if (!this.player.LastMoveRight) {
+                this.player.turnRight();
             }
-        }
-        if (e.keyCode == 37) { //left
-            if ((this.player.left - this.player.speed) >= 0) {
-                this.player.updatePosition(this.player.left - this.player.speed, this.player.top);
-                if (this.player.LastMoveRight) {
-                    this.player.turnLeft();
-                }
-            }
-        }
-        if (e.keyCode == 38) { //up
-            this.slowDown();
-        }
-        if (e.keyCode == 40) { //down
-            this.speedUp();
         }
     }
+
+    turnLeftHandler() {
+        if ((this.player.left - this.player.speed) >= 0) {
+            this.player.updatePosition(this.player.left - this.player.speed, this.player.top);
+            if (this.player.LastMoveRight) {
+                this.player.turnLeft();
+            }
+        }
+    }
+
+    slowDownHandler() {
+        if (this.gameSettings.scoreScale > 5) {
+            // this.TreeSpeed -= 1;
+            this.gameSettings.scoreScale -= 5;
+        }
+    }
+
+    speedUpHandler() {
+        // this.TreeSpeed += 1;
+        this.gameSettings.scoreScale += 5;
+    }
+
 
     playerTakeDmg(dmg: number) {
         if ((this.player.currentHealth - dmg) > 0) {
@@ -116,11 +116,25 @@ class GameEngine {
     gameOver() {
         this.gameSettings.isGameOver = true;
         clearInterval(this.gameInterval);
-        window.removeEventListener('keydown', this.trackPlayerMove, false);
+        this.inputHandler.removeListeners(); // window.removeEventListener('keydown', this.trackPlayerMove, false);
         // Game.saveScore();
         this.drawer.drawGameOver();
         // startBtn.show();
         // pauseBtn.hide();
         // pBestScore.innerHTML = ('Best score is: ' + SnowGame.getBestScore());
+    }
+    
+    gameStart() {
+        if (this.gameSettings.isGameOver) {
+            this.inputHandler.init(this.turnRightHandler, this.turnLeftHandler, this.slowDownHandler, this.speedUpHandler);
+            this.inputHandler.assignListeners(); // window.addEventListener('keydown', Game.trackPlayerMove, false);
+            this.init();
+            this.gameInterval = setInterval(function () {
+                this.mainLoop();
+            }, this.gameSettings.refreshTimeMs);
+
+            // startBtn.hide();
+            // pauseBtn.show();
+        }
     }
 }

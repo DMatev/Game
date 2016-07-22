@@ -1,10 +1,14 @@
 var GameEngine = (function () {
     function GameEngine() {
+        this.init();
+    }
+    GameEngine.prototype.init = function () {
         this.gameSettings = new GameSettings();
         this.timer = new Timer(this.gameSettings);
         this.drawer = new Drawer(this.gameSettings);
         this.player = new Player(this.gameSettings);
-    }
+        this.inputHandler = new InputHandler();
+    };
     GameEngine.prototype.mainLoop = function () {
         this.timer.increment();
         //Game.spawnTree();
@@ -51,16 +55,6 @@ var GameEngine = (function () {
         // 	}
         // }
     };
-    GameEngine.prototype.speedUp = function () {
-        // this.TreeSpeed += 1;
-        this.gameSettings.scoreScale += 5;
-    };
-    GameEngine.prototype.slowDown = function () {
-        if (this.gameSettings.scoreScale > 5) {
-            // this.TreeSpeed -= 1;
-            this.gameSettings.scoreScale -= 5;
-        }
-    };
     GameEngine.prototype.detectCollision = function (obj1, obj2) {
         var hit = ((obj1.top < (obj2.top + obj2.height)) &&
             ((obj1.left + obj1.width) > obj2.left) && ((obj1.left + obj1.width) < (obj2.left + obj2.width))) ||
@@ -68,29 +62,31 @@ var GameEngine = (function () {
                 (obj1.left > obj2.left) && (obj1.left < (obj2.left + obj2.width)));
         return hit;
     };
-    GameEngine.prototype.trackPlayerMove = function (e) {
-        if (e.keyCode == 39) {
-            if ((this.player.left + this.player.width + this.player.speed) <= this.gameSettings.mainScreenWidth) {
-                this.player.updatePosition(this.player.left + this.player.speed, this.player.top);
-                if (!this.player.LastMoveRight) {
-                    this.player.turnRight();
-                }
+    GameEngine.prototype.turnRightHandler = function () {
+        if ((this.player.left + this.player.width + this.player.speed) <= this.gameSettings.mainScreenWidth) {
+            this.player.updatePosition(this.player.left + this.player.speed, this.player.top);
+            if (!this.player.LastMoveRight) {
+                this.player.turnRight();
             }
         }
-        if (e.keyCode == 37) {
-            if ((this.player.left - this.player.speed) >= 0) {
-                this.player.updatePosition(this.player.left - this.player.speed, this.player.top);
-                if (this.player.LastMoveRight) {
-                    this.player.turnLeft();
-                }
+    };
+    GameEngine.prototype.turnLeftHandler = function () {
+        if ((this.player.left - this.player.speed) >= 0) {
+            this.player.updatePosition(this.player.left - this.player.speed, this.player.top);
+            if (this.player.LastMoveRight) {
+                this.player.turnLeft();
             }
         }
-        if (e.keyCode == 38) {
-            this.slowDown();
+    };
+    GameEngine.prototype.slowDownHandler = function () {
+        if (this.gameSettings.scoreScale > 5) {
+            // this.TreeSpeed -= 1;
+            this.gameSettings.scoreScale -= 5;
         }
-        if (e.keyCode == 40) {
-            this.speedUp();
-        }
+    };
+    GameEngine.prototype.speedUpHandler = function () {
+        // this.TreeSpeed += 1;
+        this.gameSettings.scoreScale += 5;
     };
     GameEngine.prototype.playerTakeDmg = function (dmg) {
         if ((this.player.currentHealth - dmg) > 0) {
@@ -103,12 +99,22 @@ var GameEngine = (function () {
     GameEngine.prototype.gameOver = function () {
         this.gameSettings.isGameOver = true;
         clearInterval(this.gameInterval);
-        window.removeEventListener('keydown', this.trackPlayerMove, false);
+        this.inputHandler.removeListeners(); // window.removeEventListener('keydown', this.trackPlayerMove, false);
         // Game.saveScore();
         this.drawer.drawGameOver();
         // startBtn.show();
         // pauseBtn.hide();
         // pBestScore.innerHTML = ('Best score is: ' + SnowGame.getBestScore());
+    };
+    GameEngine.prototype.gameStart = function () {
+        if (this.gameSettings.isGameOver) {
+            this.inputHandler.init(this.turnRightHandler, this.turnLeftHandler, this.slowDownHandler, this.speedUpHandler);
+            this.inputHandler.assignListeners(); // window.addEventListener('keydown', Game.trackPlayerMove, false);
+            this.init();
+            this.gameInterval = setInterval(function () {
+                this.mainLoop();
+            }, this.gameSettings.refreshTimeMs);
+        }
     };
     return GameEngine;
 }());

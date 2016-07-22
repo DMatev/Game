@@ -13,7 +13,7 @@ var GameSettings = (function () {
         this.scoreScreenWidth = 200;
         this.healthScreenWidth = 200;
         this.timerScreenWidth = 400;
-        // this.backgroundImg =
+        // this.backgroundImg = $('<img src="img/background.jpg" />')[0];
     }
     return GameSettings;
 }());
