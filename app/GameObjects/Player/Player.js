@@ -6,17 +6,19 @@ var __extends = (this && this.__extends) || function (d, b) {
 var Player = (function (_super) {
     __extends(Player, _super);
     function Player(gamesettings) {
+        var image = document.createElement('img');
+        image.setAttribute('src', 'assets/img/right.png');
         _super.call(this);
         this.maxHealth = 5;
         this.currentHealth = this.maxHealth;
         this.width = 100;
         this.height = 105;
         this.left = gamesettings.mainScreenWidth / 2 - this.width / 2;
-        this.top = 0;
-        this.speed = 10;
+        this.top = gamesettings.mainScreenHeight - this.height;
+        this.speed = 15;
         this.score = 0;
         this.LastMoveRight = true;
-        this.img = $('<img src="assets/img/right.png" />')[0];
+        this.img = image;
     }
     Player.prototype.turnLeft = function () {
         this.LastMoveRight = false;

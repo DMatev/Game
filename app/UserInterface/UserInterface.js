@@ -1,30 +1,29 @@
 var UserInterface = (function () {
     function UserInterface() {
-        this.startBtn = $('#StartBtn');
-        this.pauseBtn = $('#PauseBtn');
+        this.startBtn = document.getElementById('StartBtn');
+        this.pauseBtn = document.getElementById('PauseBtn');
     }
     UserInterface.prototype.init = function () {
-        this.pauseBtn.hide();
-        this.gameEngine = new GameEngine();
+        this.pauseBtn.style.display = 'none';
+        this.gameEngine = new GameEngine(this);
         this.assignListeners();
     };
     UserInterface.prototype.gameStart = function () {
-        this.startBtn.hide();
-        this.pauseBtn.show();
+        this.startBtn.style.display = 'none';
+        this.pauseBtn.style.display = 'block';
         this.gameEngine.init();
         this.gameEngine.gameStart();
     };
     UserInterface.prototype.gameOver = function () {
-        this.startBtn.show();
-        this.pauseBtn.hide();
-        // pBestScore.innerHTML = ('Best score is: ' + SnowGame.getBestScore());
+        this.startBtn.style.display = 'block';
+        this.pauseBtn.style.display = 'none';
     };
     UserInterface.prototype.assignListeners = function () {
         var me = this;
-        this.startBtn.on('click', function () {
+        this.startBtn.addEventListener('click', function () {
             me.gameStart();
         });
-        this.pauseBtn.on('click', function () {
+        this.pauseBtn.addEventListener('click', function () {
             if (!me.gameEngine.isGameOver()) {
                 if (this.innerHTML == 'Pause') {
                     this.innerHTML = 'Resume';

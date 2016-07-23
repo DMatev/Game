@@ -6,9 +6,11 @@ class GameEngine {
     private gameInterval: any;
     private inputHandler: InputHandler;
     private babies: Array<Baby>;
+    private userInterface: UserInterface;
 
-    constructor() {
+    constructor(userInterface: UserInterface) {
         this.init();
+        this.userInterface = userInterface;
     }
 
     init() {
@@ -33,11 +35,9 @@ class GameEngine {
         this.drawer.clearScreen();
         this.drawer.drawBackground();
         this.drawer.drawGameObject(this.player);
-
-        for (var i = 0; i < this.babies.length; i++) {
+        for (let i = 0; i < this.babies.length; i++) {
             this.drawer.drawGameObject(this.babies[i]);
         }
-
         this.drawer.drawScore(this.player.score);
         this.drawer.drawTimer(this.timer);
         this.drawer.drawHealthBar(this.player);
@@ -50,8 +50,8 @@ class GameEngine {
     interactionManager() {
         for (let i = 0; i < this.babies.length; i++) {
             //moving babies
-            if ((this.babies[i].top - this.gameSettings.babySpeed) >= 0) {
-                this.babies[i].updatePosition(this.babies[i].left, this.babies[i].top - this.gameSettings.babySpeed);
+            if ((this.babies[i].top + this.gameSettings.babySpeed) >= 0) {
+                this.babies[i].updatePosition(this.babies[i].left, this.babies[i].top + this.gameSettings.babySpeed);
             } else {
                 this.babies.splice(i, 1);
                 if (i > 0) {
@@ -60,8 +60,8 @@ class GameEngine {
                     break;
                 }
             }
-            //detecting baby hit a player
-            if (this.detectCollision(this.babies[i], this.player)) {
+            //detecting player rhit a baby
+            if (this.detectCollision(this.player, this.babies[i])) {
                 this.babies.splice(i, 1);
                 this.playerTakeDmg(1);
                 if (i > 0) {
@@ -74,10 +74,10 @@ class GameEngine {
     }
 
     detectCollision(obj1: GameObject, obj2: GameObject) {
-        var hit = ((obj1.top < (obj2.top + obj2.height)) &&
-            ((obj1.left + obj1.width) > obj2.left) && ((obj1.left + obj1.width) < (obj2.left + obj2.width))) ||
-            ((obj1.top < (obj2.top + obj2.height)) &&
-                (obj1.left > obj2.left) && (obj1.left < (obj2.left + obj2.width)));
+        let hit = (obj1.left < obj2.left + obj2.width &&
+            obj1.left + obj1.width > obj2.left &&
+            obj1.top < obj2.top + obj2.height &&
+            obj1.height + obj1.top > obj2.top)
         return hit;
     }
 
@@ -132,17 +132,15 @@ class GameEngine {
         this.gameSettings.isGameOver = true;
         clearInterval(this.gameInterval);
         this.inputHandler.removeListeners();
-        // Game.saveScore();
         this.drawer.drawGameOver();
+        this.userInterface.gameOver();
     }
 
     gameStart() {
         let me = this;
         if (this.gameSettings.isGameOver) {
             this.gameSettings.isGameOver = false;
-
             this.inputHandler.assignListeners();
-            // this.init();
             this.gameInterval = setInterval(function () {
                 me.mainLoop();
             }, this.gameSettings.refreshTimeMs);
@@ -166,5 +164,9 @@ class GameEngine {
             this.inputHandler.removeListeners();
             this.gameSettings.isPaused = !this.gameSettings.isPaused;
         }
+    }
+
+    assignListeners(hanlder: any, scope: any) {
+        this.userInterface
     }
 }

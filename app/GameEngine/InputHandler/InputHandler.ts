@@ -4,6 +4,7 @@ class InputHandler {
     private slowDown: any;
     private speedUp: any;
     private gameEngineScope: any;
+    private eventListenr: any;
 
     init(turnRight: any, turnLeft: any, slowDown: any, speedUp: any, scope: any) {
         this.turnRight = turnRight;
@@ -11,13 +12,15 @@ class InputHandler {
         this.slowDown = slowDown;
         this.speedUp = speedUp;
         this.gameEngineScope = scope;
+        this.eventListenr = this.processInput.bind(this);
     }
 
     assignListeners() {
-        window.addEventListener('keydown', this.processInput.bind(this), false);
+        window.addEventListener('keydown', this.eventListenr, false);
     }
+    
     removeListeners() {
-        window.removeEventListener('keydown', this.processInput.bind(this), false);
+        window.removeEventListener('keydown', this.eventListenr, false);
     }
 
     processInput(e) {

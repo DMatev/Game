@@ -5,9 +5,7 @@
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc:w": "tsc -w",
-    "typings": "tsd install",
-    "postinstall": "npm run typings"
+    "tsc:w": "tsc -w"
   },
   "repository": {
     "type": "git",
@@ -19,9 +17,7 @@
     "url": "https://github.com/DMatev/Game/issues"
   },
   "homepage": "https://github.com/DMatev/Game#readme",
-  "dependencies": {
-    "jquery": "3.1.0",
-    "tsd": "0.6.5",
+  "devDependencies": {
     "typescript": "1.8.10"
   }
 }

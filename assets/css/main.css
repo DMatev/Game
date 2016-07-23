@@ -1,0 +1,12 @@
+#GameScreen {
+	border: 1px solid black;
+}
+#StartBtn {
+	font-size: 20px;
+}
+#PauseBtn {
+	font-size: 20px;
+}
+#Game{
+	width: 805px;
+}

@@ -3,7 +3,7 @@ class Drawer {
     private gameSettings: GameSettings;
 
     constructor(gameSettings: GameSettings) {
-        let canvas = <HTMLCanvasElement> $('#GameScreen')[0];
+        let canvas = <HTMLCanvasElement> document.getElementById('GameScreen');
         this.context = canvas.getContext('2d');
         this.gameSettings = gameSettings;
     }
@@ -41,8 +41,8 @@ class Drawer {
     }
 
     drawTimer(timer: Timer) {
-        var minutes = Math.floor(parseInt((timer.time / 1000).toString()) / 60);
-        var seconds = parseInt((timer.time / 1000).toString()) - minutes * 60;
+        let minutes = Math.floor(parseInt((timer.time / 1000).toString()) / 60);
+        let seconds = parseInt((timer.time / 1000).toString()) - minutes * 60;
 
         this.context.save();
         this.context.translate(this.gameSettings.scoreScreenWidth, this.gameSettings.mainScreenHeight);
@@ -62,8 +62,8 @@ class Drawer {
     }
 
     drawHealthBar(player: Player) {
-        var HealthBarHeight = 20;
-        var HealthBarWidth = this.gameSettings.healthScreenWidth / (player.maxHealth + 2);
+        let HealthBarHeight = 20;
+        let HealthBarWidth = this.gameSettings.healthScreenWidth / (player.maxHealth + 2);
         
         this.context.save();
         this.context.translate((this.gameSettings.scoreScreenWidth + this.gameSettings.timerScreenWidth), this.gameSettings.mainScreenHeight);
@@ -71,11 +71,11 @@ class Drawer {
         this.context.beginPath();
         this.context.strokeStyle = "red";
         this.context.fillStyle = "red";
-        for (var i = 0; i < player.maxHealth; i++) {
+        for (let i = 0; i < player.maxHealth; i++) {
             this.context.rect(i * HealthBarWidth + 20, 10, HealthBarWidth, HealthBarHeight);
             this.context.stroke();
         }
-        for (var i = 0; i < player.currentHealth; i++) {
+        for (let i = 0; i < player.currentHealth; i++) {
             this.context.fillRect(i * HealthBarWidth + 20, 10, HealthBarWidth, HealthBarHeight);
             this.context.stroke();
         }

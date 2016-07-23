@@ -1,6 +1,6 @@
 var Drawer = (function () {
     function Drawer(gameSettings) {
-        var canvas = $('#GameScreen')[0];
+        var canvas = document.getElementById('GameScreen');
         this.context = canvas.getContext('2d');
         this.gameSettings = gameSettings;
     }

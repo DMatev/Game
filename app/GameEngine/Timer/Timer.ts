@@ -1,14 +1,14 @@
 class Timer {
     time: any;
     nowMs: number;
-    refreshTimeMS: number;
+    refreshTimeMs: number;
 
     constructor(gameSettings: GameSettings) {
         this.time = 0;
-        this.refreshTimeMS = gameSettings.refreshTimeMs;
+        this.refreshTimeMs = gameSettings.refreshTimeMs;
     }
 
     increment() {
-        this.time += this.refreshTimeMS;
+        this.time += this.refreshTimeMs;
     }
 }

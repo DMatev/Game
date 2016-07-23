@@ -1,7 +1,9 @@
 var GameSettings = (function () {
     function GameSettings() {
+        var image = document.createElement('img');
+        image.setAttribute('src', 'assets/img/background.jpg');
+        this.backgroundImg = image;
         this.refreshTimeMs = 25;
-        this.gameScreenWidth = 500;
         this.holeScreenWidth = 800;
         this.holeScreenHeight = 540;
         this.mainScreenWidth = 800;
@@ -14,7 +16,6 @@ var GameSettings = (function () {
         this.scoreScale = 1;
         this.isGameOver = true;
         this.isPaused = false;
-        this.backgroundImg = $('<img src="assets/img/background.jpg" />')[0];
         this.lastBabySpawnTimestamp = -1;
         this.babySpawnFrequencyMs = 1000;
         this.babySpeed = 5;

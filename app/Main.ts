@@ -1,5 +1,5 @@
 
-$(document).ready(function () {
+(function () {
     let userInterface = new UserInterface();
     userInterface.init();
-});
+})();

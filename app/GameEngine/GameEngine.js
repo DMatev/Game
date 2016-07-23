@@ -1,6 +1,7 @@
 var GameEngine = (function () {
-    function GameEngine() {
+    function GameEngine(userInterface) {
         this.init();
+        this.userInterface = userInterface;
     }
     GameEngine.prototype.init = function () {
         this.gameSettings = new GameSettings();
@@ -35,8 +36,8 @@ var GameEngine = (function () {
     GameEngine.prototype.interactionManager = function () {
         for (var i = 0; i < this.babies.length; i++) {
             //moving babies
-            if ((this.babies[i].top - this.gameSettings.babySpeed) >= 0) {
-                this.babies[i].updatePosition(this.babies[i].left, this.babies[i].top - this.gameSettings.babySpeed);
+            if ((this.babies[i].top + this.gameSettings.babySpeed) >= 0) {
+                this.babies[i].updatePosition(this.babies[i].left, this.babies[i].top + this.gameSettings.babySpeed);
             }
             else {
                 this.babies.splice(i, 1);
@@ -47,8 +48,8 @@ var GameEngine = (function () {
                     break;
                 }
             }
-            //detecting baby hit a player
-            if (this.detectCollision(this.babies[i], this.player)) {
+            //detecting player rhit a baby
+            if (this.detectCollision(this.player, this.babies[i])) {
                 this.babies.splice(i, 1);
                 this.playerTakeDmg(1);
                 if (i > 0) {
@@ -61,10 +62,10 @@ var GameEngine = (function () {
         }
     };
     GameEngine.prototype.detectCollision = function (obj1, obj2) {
-        var hit = ((obj1.top < (obj2.top + obj2.height)) &&
-            ((obj1.left + obj1.width) > obj2.left) && ((obj1.left + obj1.width) < (obj2.left + obj2.width))) ||
-            ((obj1.top < (obj2.top + obj2.height)) &&
-                (obj1.left > obj2.left) && (obj1.left < (obj2.left + obj2.width)));
+        var hit = (obj1.left < obj2.left + obj2.width &&
+            obj1.left + obj1.width > obj2.left &&
+            obj1.top < obj2.top + obj2.height &&
+            obj1.height + obj1.top > obj2.top);
         return hit;
     };
     GameEngine.prototype.turnRightHandler = function () {
@@ -112,15 +113,14 @@ var GameEngine = (function () {
         this.gameSettings.isGameOver = true;
         clearInterval(this.gameInterval);
         this.inputHandler.removeListeners();
-        // Game.saveScore();
         this.drawer.drawGameOver();
+        this.userInterface.gameOver();
     };
     GameEngine.prototype.gameStart = function () {
         var me = this;
         if (this.gameSettings.isGameOver) {
             this.gameSettings.isGameOver = false;
             this.inputHandler.assignListeners();
-            // this.init();
             this.gameInterval = setInterval(function () {
                 me.mainLoop();
             }, this.gameSettings.refreshTimeMs);
@@ -143,6 +143,9 @@ var GameEngine = (function () {
             this.inputHandler.removeListeners();
             this.gameSettings.isPaused = !this.gameSettings.isPaused;
         }
+    };
+    GameEngine.prototype.assignListeners = function (hanlder, scope) {
+        this.userInterface;
     };
     return GameEngine;
 }());

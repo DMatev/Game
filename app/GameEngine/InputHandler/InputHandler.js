@@ -7,12 +7,13 @@ var InputHandler = (function () {
         this.slowDown = slowDown;
         this.speedUp = speedUp;
         this.gameEngineScope = scope;
+        this.eventListenr = this.processInput.bind(this);
     };
     InputHandler.prototype.assignListeners = function () {
-        window.addEventListener('keydown', this.processInput.bind(this), false);
+        window.addEventListener('keydown', this.eventListenr, false);
     };
     InputHandler.prototype.removeListeners = function () {
-        window.removeEventListener('keydown', this.processInput.bind(this), false);
+        window.removeEventListener('keydown', this.eventListenr, false);
     };
     InputHandler.prototype.processInput = function (e) {
         if (e.keyCode == 39) {

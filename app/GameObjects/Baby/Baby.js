@@ -6,12 +6,14 @@ var __extends = (this && this.__extends) || function (d, b) {
 var Baby = (function (_super) {
     __extends(Baby, _super);
     function Baby(gamesettings) {
+        var image = document.createElement('img');
+        image.setAttribute('src', 'assets/img/baby.png');
         _super.call(this);
         this.width = 75;
         this.height = 73;
         this.left = Math.floor((Math.random() * (gamesettings.mainScreenWidth - this.width)) + 1);
-        this.top = gamesettings.mainScreenHeight - this.height;
-        this.img = $('<img src="assets/img/baby.png" />')[0];
+        this.top = 0;
+        this.img = image;
     }
     return Baby;
 }(GameObject));

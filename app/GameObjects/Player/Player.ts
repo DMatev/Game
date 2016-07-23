@@ -6,25 +6,27 @@ class Player extends GameObject {
     LastMoveRight: boolean;
 
     constructor(gamesettings: GameSettings) {
+        let image = document.createElement('img');
+        image.setAttribute('src', 'assets/img/right.png');
         super();
         this.maxHealth = 5;
         this.currentHealth = this.maxHealth;
         this.width = 100;
         this.height = 105;
-        this.left = gamesettings.mainScreenWidth/ 2 - this.width / 2;
-        this.top = 0;
-        this.speed = 10;
+        this.left = gamesettings.mainScreenWidth / 2 - this.width / 2;
+        this.top = gamesettings.mainScreenHeight - this.height;
+        this.speed = 15;
         this.score = 0;
         this.LastMoveRight = true;
-        this.img = $('<img src="assets/img/right.png" />')[0];
+        this.img = image;
     }
 
-    turnLeft(){
+    turnLeft() {
         this.LastMoveRight = false;
         this.img.src = 'assets/img/left.png';
     }
 
-    turnRight(){
+    turnRight() {
         this.LastMoveRight = true;
         this.img.src = 'assets/img/right.png';
     }

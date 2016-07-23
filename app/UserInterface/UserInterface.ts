@@ -4,42 +4,42 @@ class UserInterface {
     private gameEngine: GameEngine;
 
     constructor() {
-        this.startBtn = $('#StartBtn');
-        this.pauseBtn = $('#PauseBtn');
+        this.startBtn = document.getElementById('StartBtn');
+        this.pauseBtn = document.getElementById('PauseBtn');
     }
 
-    init(){
-        this.pauseBtn.hide();
-        this.gameEngine = new GameEngine();
-		this.assignListeners();
+    init() {
+        this.pauseBtn.style.display = 'none';
+        this.gameEngine = new GameEngine(this);
+        this.assignListeners();
     }
 
     gameStart() {
-        this.startBtn.hide();
-        this.pauseBtn.show();
+        this.startBtn.style.display = 'none';
+        this.pauseBtn.style.display = 'block';
         this.gameEngine.init();
         this.gameEngine.gameStart();
     }
+    
     gameOver() {
-        this.startBtn.show();
-        this.pauseBtn.hide();
-        // pBestScore.innerHTML = ('Best score is: ' + SnowGame.getBestScore());
+        this.startBtn.style.display = 'block';
+        this.pauseBtn.style.display = 'none';
     }
 
-    assignListeners(){
+    assignListeners() {
         let me = this;
-        this.startBtn.on('click', function() {
+        this.startBtn.addEventListener('click', function () {
             me.gameStart();
-		});
-		this.pauseBtn.on('click', function() {
-			if(!me.gameEngine.isGameOver()){
-				if(this.innerHTML == 'Pause'){
-					this.innerHTML = 'Resume';
-					} else {
-					this.innerHTML = 'Pause';
-					}
-				me.gameEngine.togglePause();
-			}
-		});
+        });
+        this.pauseBtn.addEventListener('click', function () {
+            if (!me.gameEngine.isGameOver()) {
+                if (this.innerHTML == 'Pause') {
+                    this.innerHTML = 'Resume';
+                } else {
+                    this.innerHTML = 'Pause';
+                }
+                me.gameEngine.togglePause();
+            }
+        });
     }
 }
