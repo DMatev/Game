@@ -8,10 +8,12 @@ var GameEngine = (function () {
         this.drawer = new Drawer(this.gameSettings);
         this.player = new Player(this.gameSettings);
         this.inputHandler = new InputHandler();
+        this.inputHandler.init(this.turnRightHandler, this.turnLeftHandler, this.slowDownHandler, this.speedUpHandler, this);
+        this.babies = [];
     };
     GameEngine.prototype.mainLoop = function () {
         this.timer.increment();
-        //Game.spawnTree();
+        this.spawnBaby();
         this.updateScreen();
         this.updateScore();
         this.interactionManager();
@@ -20,9 +22,9 @@ var GameEngine = (function () {
         this.drawer.clearScreen();
         this.drawer.drawBackground();
         this.drawer.drawGameObject(this.player);
-        // for (var i = 0; i < Game.Trees.length; i++) {
-        //     Game.Trees[i].draw();
-        // }
+        for (var i = 0; i < this.babies.length; i++) {
+            this.drawer.drawGameObject(this.babies[i]);
+        }
         this.drawer.drawScore(this.player.score);
         this.drawer.drawTimer(this.timer);
         this.drawer.drawHealthBar(this.player);
@@ -31,29 +33,32 @@ var GameEngine = (function () {
         this.player.score += this.gameSettings.scoreScale;
     };
     GameEngine.prototype.interactionManager = function () {
-        // for(var i=0; i<Game.Trees.length; i++){
-        // 	//moving trees
-        // 	if((Game.Trees[i].top - Game.TreeSpeed) >= 0){
-        // 		Game.Trees[i].updatePosition(Game.Trees[i].left, Game.Trees[i].top - Game.TreeSpeed);
-        // 	} else {
-        // 		Game.Trees.splice(i,1);
-        // 		if(i > 0){
-        // 			i--;
-        // 		} else {
-        // 			break;
-        // 		}
-        // 	}
-        // 	//detecting tree hit a player
-        // 	if(Game.detectCollision(Game.Trees[i], Game.Player)){
-        // 		Game.Trees.splice(i,1);
-        // 		Game.playerTakeDmg(1);
-        // 		if(i > 0){
-        // 			i--;
-        // 		} else {
-        // 			break;
-        // 		}
-        // 	}
-        // }
+        for (var i = 0; i < this.babies.length; i++) {
+            //moving babies
+            if ((this.babies[i].top - this.gameSettings.babySpeed) >= 0) {
+                this.babies[i].updatePosition(this.babies[i].left, this.babies[i].top - this.gameSettings.babySpeed);
+            }
+            else {
+                this.babies.splice(i, 1);
+                if (i > 0) {
+                    i--;
+                }
+                else {
+                    break;
+                }
+            }
+            //detecting baby hit a player
+            if (this.detectCollision(this.babies[i], this.player)) {
+                this.babies.splice(i, 1);
+                this.playerTakeDmg(1);
+                if (i > 0) {
+                    i--;
+                }
+                else {
+                    break;
+                }
+            }
+        }
     };
     GameEngine.prototype.detectCollision = function (obj1, obj2) {
         var hit = ((obj1.top < (obj2.top + obj2.height)) &&
@@ -80,12 +85,12 @@ var GameEngine = (function () {
     };
     GameEngine.prototype.slowDownHandler = function () {
         if (this.gameSettings.scoreScale > 5) {
-            // this.TreeSpeed -= 1;
+            this.gameSettings.babySpeed -= 1;
             this.gameSettings.scoreScale -= 5;
         }
     };
     GameEngine.prototype.speedUpHandler = function () {
-        // this.TreeSpeed += 1;
+        this.gameSettings.babySpeed += 1;
         this.gameSettings.scoreScale += 5;
     };
     GameEngine.prototype.playerTakeDmg = function (dmg) {
@@ -96,24 +101,47 @@ var GameEngine = (function () {
             this.gameOver();
         }
     };
+    GameEngine.prototype.spawnBaby = function () {
+        this.timer.nowMs = Date.now();
+        if (this.timer.nowMs - this.gameSettings.lastBabySpawnTimestamp > this.gameSettings.babySpawnFrequencyMs) {
+            this.gameSettings.lastBabySpawnTimestamp = this.timer.nowMs;
+            this.babies.push(new Baby(this.gameSettings));
+        }
+    };
     GameEngine.prototype.gameOver = function () {
         this.gameSettings.isGameOver = true;
         clearInterval(this.gameInterval);
-        this.inputHandler.removeListeners(); // window.removeEventListener('keydown', this.trackPlayerMove, false);
+        this.inputHandler.removeListeners();
         // Game.saveScore();
         this.drawer.drawGameOver();
-        // startBtn.show();
-        // pauseBtn.hide();
-        // pBestScore.innerHTML = ('Best score is: ' + SnowGame.getBestScore());
     };
     GameEngine.prototype.gameStart = function () {
+        var me = this;
         if (this.gameSettings.isGameOver) {
-            this.inputHandler.init(this.turnRightHandler, this.turnLeftHandler, this.slowDownHandler, this.speedUpHandler);
-            this.inputHandler.assignListeners(); // window.addEventListener('keydown', Game.trackPlayerMove, false);
-            this.init();
+            this.gameSettings.isGameOver = false;
+            this.inputHandler.assignListeners();
+            // this.init();
             this.gameInterval = setInterval(function () {
-                this.mainLoop();
+                me.mainLoop();
             }, this.gameSettings.refreshTimeMs);
+        }
+    };
+    GameEngine.prototype.isGameOver = function () {
+        return this.gameSettings.isGameOver;
+    };
+    GameEngine.prototype.togglePause = function () {
+        var me = this;
+        if (this.gameSettings.isPaused && !this.gameSettings.isGameOver) {
+            this.inputHandler.assignListeners();
+            this.gameInterval = setInterval(function () {
+                me.mainLoop();
+            }, this.gameSettings.refreshTimeMs);
+            this.gameSettings.isPaused = !this.gameSettings.isPaused;
+        }
+        else {
+            clearInterval(this.gameInterval);
+            this.inputHandler.removeListeners();
+            this.gameSettings.isPaused = !this.gameSettings.isPaused;
         }
     };
     return GameEngine;

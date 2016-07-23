@@ -7,4 +7,4 @@ var GameObject = (function () {
     };
     return GameObject;
 }());
-//# sourceMappingURL=GameObejct.js.map
+//# sourceMappingURL=GameObject.js.map

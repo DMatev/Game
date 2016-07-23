@@ -1,14 +1,31 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Game</title>
-		<!--<link rel="stylesheet" href="assets/css/main.css">-->
-	</head>
-	<body>
-		<div id='Game'>
-			<div> 
-				<canvas width="800" height="540" id="GameScreen"></canvas>	
-			</div>
+
+<head>
+	<title>Game</title>
+	<!--<link rel="stylesheet" href="assets/css/main.css">-->
+	<script src="node_modules/jquery/dist/jquery.min.js"></script>
+
+	<script src="app/GameEngine/GameSettings/GameSettings.js"></script>
+	<script src="app/GameObjects/GameObject/GameObject.js"></script>
+	<script src="app/GameObjects/Player/Player.js"></script>
+	<script src="app/GameObjects/Baby/Baby.js"></script>
+	<script src="app/GameEngine/Timer/Timer.js"></script>
+	<script src="app/GameEngine/Drawer/Drawer.js"></script>
+	<script src="app/GameEngine/InputHandler/InputHandler.js"></script>
+	<script src="app/GameEngine/GameEngine.js"></script>
+	<script src="app/UserInterface/UserInterface.js"></script>
+	<script src="app/Main.js"></script>
+</head>
+
+<body>
+	<div id='Game'>
+		<div>
+			<canvas width="800" height="540" id="GameScreen"></canvas>
 		</div>
-	</body>
+		<button id='StartBtn'>Start</button>
+		<button id='PauseBtn'>Pause</button>
+	</div>
+</body>
+
 </html>

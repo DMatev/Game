@@ -3,6 +3,8 @@ class Drawer {
     private gameSettings: GameSettings;
 
     constructor(gameSettings: GameSettings) {
+        let canvas = <HTMLCanvasElement> $('#GameScreen')[0];
+        this.context = canvas.getContext('2d');
         this.gameSettings = gameSettings;
     }
 
@@ -39,8 +41,8 @@ class Drawer {
     }
 
     drawTimer(timer: Timer) {
-        var minutes = Math.floor((timer.time / 1000) / 60); // var minutes = Math.floor(parseInt(timer.time / 1000) / 60);
-        var seconds = (timer.time / 1000) - minutes * 60;	// var seconds = parseInt(timer.time / 1000) - minutes * 60;
+        var minutes = Math.floor(parseInt((timer.time / 1000).toString()) / 60);
+        var seconds = parseInt((timer.time / 1000).toString()) - minutes * 60;
 
         this.context.save();
         this.context.translate(this.gameSettings.scoreScreenWidth, this.gameSettings.mainScreenHeight);
@@ -61,7 +63,7 @@ class Drawer {
 
     drawHealthBar(player: Player) {
         var HealthBarHeight = 20;
-        var HealthBarWidth = this.gameSettings.healthScreenWidth / (player.maxHealth + 2);	// var HealthBarWidth = parseInt(this.gameSettings.healthScreenWidth/(player.maxHealth + 2));
+        var HealthBarWidth = this.gameSettings.healthScreenWidth / (player.maxHealth + 2);
         
         this.context.save();
         this.context.translate((this.gameSettings.scoreScreenWidth + this.gameSettings.timerScreenWidth), this.gameSettings.mainScreenHeight);

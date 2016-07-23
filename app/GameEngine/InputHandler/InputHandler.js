@@ -1,32 +1,36 @@
 var InputHandler = (function () {
     function InputHandler() {
     }
-    InputHandler.prototype.init = function (turnRight, turnLeft, slowDown, speedUp) {
+    InputHandler.prototype.init = function (turnRight, turnLeft, slowDown, speedUp, scope) {
         this.turnRight = turnRight;
         this.turnLeft = turnLeft;
         this.slowDown = slowDown;
         this.speedUp = speedUp;
+        this.gameEngineScope = scope;
     };
     InputHandler.prototype.assignListeners = function () {
-        window.addEventListener('keydown', this.processInput, false);
+        window.addEventListener('keydown', this.processInput.bind(this), false);
     };
     InputHandler.prototype.removeListeners = function () {
-        window.removeEventListener('keydown', this.processInput, false);
+        window.removeEventListener('keydown', this.processInput.bind(this), false);
     };
     InputHandler.prototype.processInput = function (e) {
         if (e.keyCode == 39) {
-            this.turnRight();
+            this.turnRight.apply(this.gameEngineScope);
         }
         if (e.keyCode == 37) {
-            this.turnLeft();
+            this.turnLeft.apply(this.gameEngineScope);
+            ;
         }
         if (e.keyCode == 38) {
-            this.slowDown();
+            this.slowDown.apply(this.gameEngineScope);
+            ;
         }
         if (e.keyCode == 40) {
-            this.speedUp();
+            this.speedUp.apply(this.gameEngineScope);
+            ;
         }
     };
     return InputHandler;
 }());
-//# sourceMappingURL=Input.js.map
+//# sourceMappingURL=InputHandler.js.map

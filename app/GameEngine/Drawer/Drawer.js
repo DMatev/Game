@@ -1,5 +1,7 @@
 var Drawer = (function () {
     function Drawer(gameSettings) {
+        var canvas = $('#GameScreen')[0];
+        this.context = canvas.getContext('2d');
         this.gameSettings = gameSettings;
     }
     Drawer.prototype.clearScreen = function () {
@@ -31,8 +33,8 @@ var Drawer = (function () {
         this.context.restore();
     };
     Drawer.prototype.drawTimer = function (timer) {
-        var minutes = Math.floor((timer.time / 1000) / 60); // var minutes = Math.floor(parseInt(timer.time / 1000) / 60);
-        var seconds = (timer.time / 1000) - minutes * 60; // var seconds = parseInt(timer.time / 1000) - minutes * 60;
+        var minutes = Math.floor(parseInt((timer.time / 1000).toString()) / 60);
+        var seconds = parseInt((timer.time / 1000).toString()) - minutes * 60;
         this.context.save();
         this.context.translate(this.gameSettings.scoreScreenWidth, this.gameSettings.mainScreenHeight);
         this.context.font = "20px Georgia";
@@ -50,7 +52,7 @@ var Drawer = (function () {
     };
     Drawer.prototype.drawHealthBar = function (player) {
         var HealthBarHeight = 20;
-        var HealthBarWidth = this.gameSettings.healthScreenWidth / (player.maxHealth + 2); // var HealthBarWidth = parseInt(this.gameSettings.healthScreenWidth/(player.maxHealth + 2));
+        var HealthBarWidth = this.gameSettings.healthScreenWidth / (player.maxHealth + 2);
         this.context.save();
         this.context.translate((this.gameSettings.scoreScreenWidth + this.gameSettings.timerScreenWidth), this.gameSettings.mainScreenHeight);
         this.context.beginPath();
