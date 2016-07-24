@@ -11,20 +11,24 @@ var GameEngine = (function () {
         this.inputHandler = new InputHandler();
         this.inputHandler.init(this.turnRightHandler, this.turnLeftHandler, this.slowDownHandler, this.speedUpHandler, this);
         this.babies = [];
+        this.beers = [];
     };
     GameEngine.prototype.mainLoop = function () {
         this.timer.increment();
         this.spawnBaby();
+        this.spawnBeer();
         this.updateScreen();
         this.updateScore();
         this.interactionManager();
     };
     GameEngine.prototype.updateScreen = function () {
         this.drawer.clearScreen();
-        this.drawer.drawBackground();
         this.drawer.drawGameObject(this.player);
         for (var i = 0; i < this.babies.length; i++) {
             this.drawer.drawGameObject(this.babies[i]);
+        }
+        for (var i = 0; i < this.beers.length; i++) {
+            this.drawer.drawGameObject(this.beers[i]);
         }
         this.drawer.drawScore(this.player.score);
         this.drawer.drawTimer(this.timer);
@@ -34,6 +38,10 @@ var GameEngine = (function () {
         this.player.score += this.gameSettings.scoreScale;
     };
     GameEngine.prototype.interactionManager = function () {
+        this.moveBabies();
+        this.moveBeers();
+    };
+    GameEngine.prototype.moveBabies = function () {
         for (var i = 0; i < this.babies.length; i++) {
             //moving babies
             if ((this.babies[i].top + this.gameSettings.babySpeed) >= 0) {
@@ -52,6 +60,34 @@ var GameEngine = (function () {
             if (this.detectCollision(this.player, this.babies[i])) {
                 this.babies.splice(i, 1);
                 this.playerTakeDmg(1);
+                if (i > 0) {
+                    i--;
+                }
+                else {
+                    break;
+                }
+            }
+        }
+    };
+    GameEngine.prototype.moveBeers = function () {
+        for (var i = 0; i < this.beers.length; i++) {
+            //moving beers
+            if ((this.beers[i].top + this.gameSettings.beerSpeed) >= 0) {
+                this.beers[i].updatePosition(this.beers[i].left, this.beers[i].top + this.gameSettings.beerSpeed);
+            }
+            else {
+                this.beers.splice(i, 1);
+                if (i > 0) {
+                    i--;
+                }
+                else {
+                    break;
+                }
+            }
+            //detecting player hit a beer
+            if (this.detectCollision(this.player, this.beers[i])) {
+                this.beers.splice(i, 1);
+                this.playerHeal(1);
                 if (i > 0) {
                     i--;
                 }
@@ -102,11 +138,23 @@ var GameEngine = (function () {
             this.gameOver();
         }
     };
+    GameEngine.prototype.playerHeal = function (healingPoint) {
+        if ((this.player.currentHealth + healingPoint) <= this.player.maxHealth) {
+            this.player.currentHealth++;
+        }
+    };
     GameEngine.prototype.spawnBaby = function () {
         this.timer.nowMs = Date.now();
         if (this.timer.nowMs - this.gameSettings.lastBabySpawnTimestamp > this.gameSettings.babySpawnFrequencyMs) {
             this.gameSettings.lastBabySpawnTimestamp = this.timer.nowMs;
             this.babies.push(new Baby(this.gameSettings));
+        }
+    };
+    GameEngine.prototype.spawnBeer = function () {
+        this.timer.nowMs = Date.now();
+        if (this.timer.nowMs - this.gameSettings.lastBeerSpawnTimestamp > this.gameSettings.beerSpawnFrequencyMs) {
+            this.gameSettings.lastBeerSpawnTimestamp = this.timer.nowMs;
+            this.beers.push(new Beer(this.gameSettings));
         }
     };
     GameEngine.prototype.gameOver = function () {

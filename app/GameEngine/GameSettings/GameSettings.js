@@ -1,8 +1,5 @@
 var GameSettings = (function () {
     function GameSettings() {
-        var image = document.createElement('img');
-        image.setAttribute('src', 'assets/img/background.jpg');
-        this.backgroundImg = image;
         this.refreshTimeMs = 25;
         this.holeScreenWidth = 800;
         this.holeScreenHeight = 540;
@@ -12,13 +9,15 @@ var GameSettings = (function () {
         this.healthScreenWidth = 200;
         this.timerScreenWidth = 400;
         this.gameSpeed = 5;
-        this.backgroundOffset = 0;
         this.scoreScale = 1;
         this.isGameOver = true;
         this.isPaused = false;
         this.lastBabySpawnTimestamp = -1;
         this.babySpawnFrequencyMs = 1000;
         this.babySpeed = 5;
+        this.lastBeerSpawnTimestamp = -1;
+        this.beerSpawnFrequencyMs = 7000;
+        this.beerSpeed = 8;
     }
     return GameSettings;
 }());

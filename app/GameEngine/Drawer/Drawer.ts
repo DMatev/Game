@@ -12,19 +12,6 @@ class Drawer {
         this.context.clearRect(0, 0, this.gameSettings.holeScreenWidth, this.gameSettings.holeScreenHeight);
     }
 
-    drawBackground() {
-        this.context.save();
-        this.gameSettings.backgroundOffset += this.gameSettings.gameSpeed;
-        if (this.gameSettings.backgroundOffset >= 1400) {
-            this.context.drawImage(this.gameSettings.backgroundImg, 0, 700 - (this.gameSettings.backgroundOffset - 1400));
-        }
-        if (this.gameSettings.backgroundOffset >= 2100) {
-            this.gameSettings.backgroundOffset = 0;
-        }
-        this.context.drawImage(this.gameSettings.backgroundImg, 0, -this.gameSettings.backgroundOffset);
-        this.context.restore();
-    }
-
     drawGameObject(gameObject: GameObject) {
         this.context.save();
         this.context.drawImage(gameObject.img, gameObject.left, gameObject.top, gameObject.width, gameObject.height);

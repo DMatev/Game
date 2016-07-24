@@ -7,7 +7,7 @@ class GameEngine {
     private inputHandler: InputHandler;
     private babies: Array<Baby>;
     private userInterface: UserInterface;
-
+    private beers: Array<Beer>;
     constructor(userInterface: UserInterface) {
         this.init();
         this.userInterface = userInterface;
@@ -21,11 +21,13 @@ class GameEngine {
         this.inputHandler = new InputHandler();
         this.inputHandler.init(this.turnRightHandler, this.turnLeftHandler, this.slowDownHandler, this.speedUpHandler, this);
         this.babies = [];
+        this.beers = [];
     }
 
     mainLoop() {
         this.timer.increment();
         this.spawnBaby();
+        this.spawnBeer();
         this.updateScreen();
         this.updateScore();
         this.interactionManager();
@@ -33,10 +35,12 @@ class GameEngine {
 
     updateScreen() {
         this.drawer.clearScreen();
-        this.drawer.drawBackground();
         this.drawer.drawGameObject(this.player);
         for (let i = 0; i < this.babies.length; i++) {
             this.drawer.drawGameObject(this.babies[i]);
+        }
+        for (let i = 0; i < this.beers.length; i++) {
+            this.drawer.drawGameObject(this.beers[i]);
         }
         this.drawer.drawScore(this.player.score);
         this.drawer.drawTimer(this.timer);
@@ -48,6 +52,11 @@ class GameEngine {
     }
 
     interactionManager() {
+        this.moveBabies();
+        this.moveBeers();
+    }
+    
+    moveBabies(){
         for (let i = 0; i < this.babies.length; i++) {
             //moving babies
             if ((this.babies[i].top + this.gameSettings.babySpeed) >= 0) {
@@ -64,6 +73,31 @@ class GameEngine {
             if (this.detectCollision(this.player, this.babies[i])) {
                 this.babies.splice(i, 1);
                 this.playerTakeDmg(1);
+                if (i > 0) {
+                    i--;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+    moveBeers(){
+        for (let i = 0; i < this.beers.length; i++) {
+            //moving beers
+            if ((this.beers[i].top + this.gameSettings.beerSpeed) >= 0) {
+                this.beers[i].updatePosition(this.beers[i].left, this.beers[i].top + this.gameSettings.beerSpeed);
+            } else {
+                this.beers.splice(i, 1);
+                if (i > 0) {
+                    i--;
+                } else {
+                    break;
+                }
+            }
+            //detecting player hit a beer
+            if (this.detectCollision(this.player, this.beers[i])) {
+                this.beers.splice(i, 1);
+                this.playerHeal(1);
                 if (i > 0) {
                     i--;
                 } else {
@@ -120,11 +154,25 @@ class GameEngine {
         }
     }
 
+    playerHeal(healingPoint: number) {
+        if ((this.player.currentHealth + healingPoint) <= this.player.maxHealth) {
+            this.player.currentHealth++;
+        }
+    }
+
     spawnBaby() {
         this.timer.nowMs = Date.now();
         if (this.timer.nowMs - this.gameSettings.lastBabySpawnTimestamp > this.gameSettings.babySpawnFrequencyMs) {
             this.gameSettings.lastBabySpawnTimestamp = this.timer.nowMs;
             this.babies.push(new Baby(this.gameSettings));
+        }
+    }
+
+    spawnBeer() {
+        this.timer.nowMs = Date.now();
+        if (this.timer.nowMs - this.gameSettings.lastBeerSpawnTimestamp > this.gameSettings.beerSpawnFrequencyMs) {
+            this.gameSettings.lastBeerSpawnTimestamp = this.timer.nowMs;
+            this.beers.push(new Beer(this.gameSettings));
         }
     }
 
